@@ -902,6 +902,25 @@ __attribute__((weak_import));
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+- (void)removeAllViewControllersAnimated:(BOOL)animated completion:(void (^)(BOOL finished))block {
+    if (animated) {
+        [UIView animateWithDuration:0.4 animations:^{
+            self.visibleViewController.view.alpha = 0.0;
+            self.visibleViewController.navigationController.view.alpha = 0.0;
+            self.rootViewController.view.alpha = 0.0;
+        } completion:^(BOOL finished) {
+            block(finished);
+            [self removeAllViewControllers];
+        }];
+
+    } else {
+        block(YES);
+        [self removeAllViewControllers];
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
 - (NSString*)pathForObject:(id)object {
   if ([object isKindOfClass:[UIViewController class]]) {
     NSMutableArray* paths = [NSMutableArray array];

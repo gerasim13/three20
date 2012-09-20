@@ -266,6 +266,7 @@
  * Removes all view controllers from the window and releases them.
  */
 - (void)removeAllViewControllers;
+- (void)removeAllViewControllersAnimated:(BOOL)animated completion:(void (^)(BOOL finished))block;
 
 /**
  * Gets a navigation path which can be used to locate an object.

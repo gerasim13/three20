@@ -85,16 +85,16 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 - (void)loadView {
-  if (nil != self.nibName) {
-    [super loadView];
+    if (nil != self.nibName) {
+        [super loadView];
 
-  } else {
-    CGRect frame = self.wantsFullScreenLayout ? TTScreenBounds() : TTNavigationFrame();
-    self.view = [[[UIView alloc] initWithFrame:frame] autorelease];
-    self.view.autoresizesSubviews = YES;
-    self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.view.backgroundColor = TTSTYLEVAR(backgroundColor);
-  }
+    } else {
+        CGRect frame = self.wantsFullScreenLayout ? TTScreenBounds() : TTNavigationFrame();
+        self.view = [[[UIView alloc] initWithFrame:frame] autorelease];
+        self.view.autoresizesSubviews = YES;
+        self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        self.view.backgroundColor = TTSTYLEVAR(backgroundColor);
+    }
 }
 
 
