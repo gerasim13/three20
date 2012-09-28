@@ -478,11 +478,21 @@ TT_FIX_CATEGORY_BUG(UIViewAdditions)
   CGPoint centerEnd = CGPointMake(floor(screenFrame.size.width/2 - self.width/2),
                                   screenFrame.size.height - floor(self.height/2));
 
-  return [NSDictionary dictionaryWithObjectsAndKeys:
-          [NSValue valueWithCGRect:bounds], UIKeyboardBoundsUserInfoKey,
-          [NSValue valueWithCGPoint:centerBegin], UIKeyboardCenterBeginUserInfoKey,
-          [NSValue valueWithCGPoint:centerEnd], UIKeyboardCenterEndUserInfoKey,
-          nil];
+#ifdef __IPHONE_3_2
+  NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+  [NSValue valueWithCGRect:bounds], UIKeyboardBoundsUserInfoKey,
+  [NSValue valueWithCGPoint:centerBegin], UIKeyboardFrameBeginUserInfoKey,
+  [NSValue valueWithCGPoint:centerEnd], UIKeyboardFrameEndUserInfoKey,
+  nil];
+#else
+  NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+  [NSValue valueWithCGRect:bounds], UIKeyboardBoundsUserInfoKey,
+  [NSValue valueWithCGPoint:centerBegin], UIKeyboardCenterBeginUserInfoKey,
+  [NSValue valueWithCGPoint:centerEnd], UIKeyboardCenterEndUserInfoKey,
+  nil];
+#endif
+
+    return dictionary;
 }
 
 
