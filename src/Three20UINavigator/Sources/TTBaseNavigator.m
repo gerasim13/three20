@@ -377,35 +377,37 @@ __attribute__((weak_import));
          parentController: (UIViewController*)parentController
                      mode: (TTNavigationMode)mode
                    action: (TTURLAction*)action {
-  BOOL didPresentNewController = YES;
+    @autoreleasepool {
+        BOOL didPresentNewController = YES;
 
-  if (nil == _rootViewController) {
-    [self setRootViewController:controller];
+        if (nil == _rootViewController) {
+            [self setRootViewController:controller];
 
-  } else {
-    UIViewController* previousSuper = controller.superController;
-    if (nil != previousSuper) {
-      if (previousSuper != parentController) {
-        // The controller already exists, so we just need to make it visible
-        for (UIViewController* superController = previousSuper; controller; ) {
-          UIViewController* nextSuper = superController.superController;
-          [superController bringControllerToFront: controller
-                                         animated: !nextSuper];
-          controller = superController;
-          superController = nextSuper;
+        } else {
+            UIViewController* previousSuper = controller.superController;
+            if (nil != previousSuper) {
+                if (previousSuper != parentController) {
+                    // The controller already exists, so we just need to make it visible
+                    for (UIViewController* superController = previousSuper; controller; ) {
+                        UIViewController* nextSuper = superController.superController;
+                        [superController bringControllerToFront: controller
+                                                       animated: !nextSuper];
+                        controller = superController;
+                        superController = nextSuper;
+                    }
+                }
+                didPresentNewController = NO;
+
+            } else if (nil != parentController) {
+                [self presentDependantController: controller
+                                parentController: parentController
+                                            mode: mode
+                                          action: action];
+            }
         }
-      }
-      didPresentNewController = NO;
 
-    } else if (nil != parentController) {
-      [self presentDependantController: controller
-                      parentController: parentController
-                                  mode: mode
-                                action: action];
+        return didPresentNewController;
     }
-  }
-
-  return didPresentNewController;
 }
 
 
@@ -414,34 +416,35 @@ __attribute__((weak_import));
             parentURLPath: (NSString*)parentURLPath
               withPattern: (TTURLNavigatorPattern*)pattern
                    action: (TTURLAction*)action {
-  BOOL didPresentNewController = NO;
+@autoreleasepool {
+ BOOL didPresentNewController = NO;
 
-  if (nil != controller) {
-    UIViewController* topViewController = self.topViewController;
+ if (nil != controller) {
+   __autoreleasing UIViewController* topViewController = self.topViewController;
 
-    if (controller != topViewController) {
-      UIViewController* parentController = [self parentForController: controller
-                                                         isContainer: [controller
-                                                                       canContainControllers]
-                                                       parentURLPath: parentURLPath
-                                            ? parentURLPath
-                                                                    : pattern.parentURL];
+   if (controller != topViewController) {
+     __autoreleasing UIViewController* parentController = [self parentForController: controller
+                                                isContainer: [controller canContainControllers]
+                                                parentURLPath: parentURLPath
+                                                ? parentURLPath : pattern.parentURL];
 
-      if (nil != parentController && parentController != topViewController) {
-        [self presentController: parentController
-               parentController: nil
-                           mode: TTNavigationModeNone
-                         action: [TTURLAction actionWithURLPath:nil]];
-      }
+            if (nil != parentController && parentController != topViewController) {
+                __autoreleasing TTURLAction *urlAction = [TTURLAction actionWithURLPath:nil];
+                [self presentController: parentController
+                       parentController: nil
+                                   mode: TTNavigationModeNone
+                                 action: urlAction];
+            }
 
-      didPresentNewController = [self
-                                 presentController: controller
-                                 parentController: parentController
-                                 mode: pattern.navigationMode
-                                 action: action];
+            didPresentNewController = [self
+                                       presentController: controller
+                                       parentController: parentController
+                                       mode: pattern.navigationMode
+                                       action: action];
+        }
     }
-  }
-  return didPresentNewController;
+    return didPresentNewController;
+}
 }
 
 
